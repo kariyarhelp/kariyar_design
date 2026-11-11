@@ -1,0 +1,58 @@
+name: Convert to Next.js
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "next-app/**"
+      - ".github/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: convert-nextjs
+  cancel-in-progress: false
+
+jobs:
+  convert:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: List changed files
+        id: diff
+        run: |
+          git diff --name-only HEAD~1 HEAD -- . ':!next-app' ':!.github' > changed.txt || git ls-files > changed.txt
+          cat changed.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Convert with Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: '--allowedTools "Read,Write,Edit,Glob,Grep,Bash(npm:*),Bash(npx:*),Bash(cat:*),Bash(ls:*)"'
+          prompt: |
+            Convert the source files listed in changed.txt into a Next.js 14 App Router project in ./next-app (TypeScript, React Server Components where possible).
+            - If ./next-app does not exist, scaffold it (package.json, next.config.js, tsconfig.json, app/layout.tsx, app/page.tsx).
+            - HTML pages -> app/<route>/page.tsx. Inline <script> logic -> client components ("use client") in components/.
+            - CSS -> app/globals.css or CSS modules. Static assets -> public/.
+            - Only update files affected by the changes; keep existing converted code otherwise.
+            - Do not modify anything outside ./next-app.
+            - Run `npm install` and `npm run build` inside ./next-app and fix any build errors.
+
+      - name: Commit result
+        run: |
+          rm -f changed.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add next-app
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Auto-convert to Next.js (${GITHUB_SHA::7})"
+          git push

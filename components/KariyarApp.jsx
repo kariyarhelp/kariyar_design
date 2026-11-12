@@ -56,6 +56,8 @@ export default function KSApp({ page = 'home' }) {
   }, [page]);
   const [sec, setSec] = React.useState('home');
   const navRef = React.useRef(null);
+  const [menu, setMenu] = React.useState(false);
+  React.useEffect(() => { document.documentElement.classList.toggle('ks-lock', menu); if (!menu) return; const k = (e) => { if (e.key === 'Escape') setMenu(false); }; addEventListener('keydown', k); return () => removeEventListener('keydown', k); }, [menu]);
   const [bar, setBar] = React.useState(null);
   React.useEffect(() => {
     if (page !== 'home') { setSec(page); return; }
@@ -80,13 +82,24 @@ export default function KSApp({ page = 'home' }) {
     <KSLang.Provider value={{ lang, tx, setLang }}>
       <nav className={'ks-nav' + (scrolled ? ' scrolled' : '')}>
         <div className="ks-nav-l" ref={navRef}>
+        <button className="ks-burger" aria-label={tx('Menu', 'Menu')} aria-expanded={menu} aria-controls="ks-menu" onClick={() => setMenu(m => !m)}><i className={'ph ' + (menu ? 'ph-x' : 'ph-list')} aria-hidden="true"></i></button>
+        <div id="ks-menu" className={'ks-menu' + (menu ? ' open' : '')} aria-hidden={!menu} inert={menu ? undefined : ''}>
+          <a href="/" onClick={(e) => { setMenu(false); if (page === 'home') { e.preventDefault(); window.scrollTo(0, 0); } }}>{tx('Home', 'Gida')}</a>
+          <a href="/#impact" onClick={() => setMenu(false)}>{tx('Impact', 'Tasiri')}</a>
+          <a href="/#features" onClick={() => setMenu(false)}>{tx('How we help', 'Yadda muke taimakawa')}</a>
+          <a href="/contact" className={page === 'contact' ? 'on' : ''} onClick={() => setMenu(false)}>{tx('Contact', 'Tuntuɓe mu')}</a>
+          <div className="ks-menu-lang"><span>{tx('Language', 'Harshe')}</span><div className="ks-lang" role="group" aria-label="Language">
+            <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>English</button>
+            <button className={lang === 'ha' ? 'on' : ''} onClick={() => setLang('ha')}>Hausa</button>
+          </div></div>
+        </div>
           <a data-sec="home" className={'lnk' + (sec === 'home' ? ' on' : '')} style={{ fontWeight: 600 }} href="/" onClick={(e) => { if (page === 'home') { e.preventDefault(); history.replaceState(null, '', '/'); window.scrollTo(0, 0); } }}>{tx('Home', 'Gida')}</a>
           <a data-sec="impact" className={'lnk' + (sec === 'impact' ? ' on' : '')} href="/#impact">{tx('Impact', 'Tasiri')}</a>
           <a data-sec="features" className={'lnk' + (sec === 'features' ? ' on' : '')} href="/#features">{tx('How we help', 'Yadda muke taimakawa')}</a>
           <a data-sec="contact" className={'lnk ks-nav-contact' + (sec === 'contact' ? ' on' : '')} href="/contact">{tx('Contact', 'Tuntuɓe mu')}</a>
           <span className="ks-nav-bar" aria-hidden="true" style={{ width: bar ? bar.w : 0, transform: 'translateX(' + (bar ? bar.x : 0) + 'px)', opacity: bar ? 1 : 0 }}></span>
         </div>
-        <a className="brand" href="/" onClick={(e) => { if (page === 'home') { e.preventDefault(); history.replaceState(null, '', '/'); window.scrollTo(0, 0); } }}><img className="ks-logo-img" width="131" height="30" src="/brand/kariyar-logo.svg" alt="Kariyar"></img></a>
+        <a className="brand" href="/" onClick={(e) => { if (page === 'home') { e.preventDefault(); history.replaceState(null, '', '/'); window.scrollTo(0, 0); } }}><img className="ks-logo-img" width="131" height="30" src="/brand/kariyar-logo.svg" alt="Kariyar"></img><img className="ks-logo-img ks-logo-on-dark" width="131" height="30" src="/brand/kariyar-logo-white.svg" alt="Kariyar"></img></a>
         <div className="ks-nav-r">
         <div className="ks-lang" role="group" aria-label="Language">
           <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>

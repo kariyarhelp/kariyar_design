@@ -1,18 +1,16 @@
-# Kariyar
-
-Private help for women and girls, on any phone.
+# Kariyar website (Next.js)
 
 ## Run locally
-
 ```
 npm install
 npm run dev
 ```
-
 Open http://localhost:3000.
 
-## Structure
+## Deploy
+Push to GitHub and import the repo on vercel.com (zero config), or run `npm run build && npm start` on any Node host.
 
+## Structure
 - `app/layout.jsx` — HTML shell, metadata, global CSS
 - `app/page.jsx` — loads the site client-side
 - `components/KariyarApp.jsx` — nav, language switch, home / #contact routing

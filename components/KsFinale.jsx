@@ -163,17 +163,19 @@ function KSEnvelope({ focus, len = 0, sent, bad, done, intro, onClick }) {
 }
 
 function KSSignup({ onClose }) {
-  const { tx } = useKS();
+  const { tx, lang } = useKS();
   const { EmailCapture } = DS;
   const [done, setDone] = React.useState(false);
   const [focus, setFocus] = React.useState(false);
   const [len, setLen] = React.useState(0);
+  const [ok, setOk] = React.useState(false);
   const [sent, setSent] = React.useState(false);
   const [bad, setBad] = React.useState(0);
   const [email, setEmail] = React.useState('');
   const topicList = [['chart-line-up', tx('Impact stories', 'Labaran tasiri')], ['handshake', tx('Partner news', 'Labaran abokan hulɗa')], ['megaphone', tx('Programme updates', 'Sabbin shirye-shirye')], ['briefcase', tx('Responder jobs', 'Ayyukan taimako')]];
   const [topics, setTopics] = React.useState([0, 1, 2]);
   const fieldRef = React.useRef(null);
+  React.useEffect(() => { const b = fieldRef.current && fieldRef.current.querySelector('button[type=submit]'); if (b) { b.disabled = !ok || sent; b.title = ok ? '' : tx('Enter your email first', 'Shigar da imel ɗinki tukuna'); } }, [ok, sent, done, lang]);
   const submit = (v) => {
     if (!/\S+@\S+\.\S+/.test(v)) { setBad((b) => b + 1); return; }
     setEmail(v); setSent(true); setTimeout(() => setDone(true), 1400);
@@ -192,7 +194,7 @@ function KSSignup({ onClose }) {
           <KSEnvelope intro focus={focus} len={len} sent={sent} bad={bad} onClick={() => fieldRef.current?.querySelector('input')?.focus()}></KSEnvelope>
           <h3 id="ks-su-t">{tx('Sign up for updates', 'Yi rajista don labarai')}</h3>
           <p>{tx("Impact stories, partner news and programme updates. No spam. Unsubscribe any time.", "Labaran tasiri, labaran abokan hulɗa da sabbin shirye-shirye. Babu saƙon banza. Ki daina a kowane lokaci.")}</p>
-          <div ref={fieldRef} className="ks-modal-field" onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} onInput={(e) => setLen(e.target.value.length)}><EmailCapture width="100%" placeholder={tx('Your email address', 'Adireshin imel ɗinki')} cta={tx('Sign up', 'Yi rajista')} onSubmit={submit}></EmailCapture></div>
+          <div ref={fieldRef} className="ks-modal-field" onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} onInput={(e) => { setLen(e.target.value.length); setOk(/^\S+@\S+\.\S+$/.test(e.target.value.trim())); }}><EmailCapture width="100%" placeholder={tx('Your email address', 'Adireshin imel ɗinki')} cta={tx('Sign up', 'Yi rajista')} onSubmit={submit}></EmailCapture></div>
           <fieldset className="ks-su-topics"><legend>{tx('What would you like to hear about?', 'Me kike so ki ji labari a kai?')}</legend>{topicList.map(([ic, l], i) => { const on = topics.includes(i); return <button type="button" key={ic} className={'ks-su-chip' + (on ? ' on' : '')} aria-pressed={on} onClick={() => setTopics(t => on ? t.filter(x => x !== i) : [...t, i])}><i className={'ph' + (on ? '-fill' : '') + ' ph-' + (on ? 'check-circle' : ic)}></i>{l}</button>; })}</fieldset>
           <p className="ks-su-fine">{tx('About once a month. We only use your email to send these updates. ', 'Kusan sau ɗaya a wata. Muna amfani da imel ɗinki ne kawai don aiko da waɗannan labarai. ')}<a href="/privacy" onClick={onClose}>{tx('Privacy policy', 'Manufar sirri')}</a></p>
         </React.Fragment>}
@@ -215,7 +217,7 @@ function KSFooter() {
             <span className="brand"><img className="ks-foot-logo" width="175" height="40" src="/brand/kariyar-logo-white.svg" alt="Kariyar"></img></span>
             <div className="ks-foot-contact">
               <span><b>{tx('Helpline:', 'Layin taimako:')}</b> <a href="tel:*384*77%23">*384*77#</a></span>
-              <span><b>{tx('Email:', 'Imel:')}</b> <a href="mailto:hello@kariyar.org">hello@kariyar.org</a></span>
+              <span><b>{tx('Email:', 'Imel:')}</b> <a href="mailto:help@kariyar.com">help@kariyar.com</a></span>
             </div>
           </div>
           <div className="ks-foot-act">

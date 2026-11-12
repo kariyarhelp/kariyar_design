@@ -12,12 +12,13 @@ export const metadata = {
   formatDetection: { telephone: false },
 };
 
-export const viewport = { width: 'device-width', initialScale: 1, themeColor: '#0f0f35' };
+export const viewport = { width: 'device-width', initialScale: 1, themeColor: '#0f0f35', colorScheme: 'light dark', viewportFit: 'cover' };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: "(function(){var q=new URLSearchParams(location.search).get('theme');var mq=window.matchMedia('(prefers-color-scheme: dark)');var pick=q||'auto';function set(){document.documentElement.setAttribute('data-theme',pick==='auto'?(mq.matches?'dark':'light'):pick);}set();mq.addEventListener&&mq.addEventListener('change',set);window.ksSetTheme=function(t){pick=(t||'auto').toLowerCase();set();};})();" }} />
         <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
         <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
       </head>

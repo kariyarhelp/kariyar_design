@@ -1,4 +1,6 @@
-# Kariyar website (Next.js)
+# Kariyar
+
+Private help for women and girls, on any phone.
 
 ## Run locally
 
@@ -8,10 +10,6 @@ npm run dev
 ```
 
 Open http://localhost:3000.
-
-## Deploy
-
-Push to GitHub and import the repo on vercel.com (zero config), or run `npm run build && npm start` on any Node host.
 
 ## Structure
 

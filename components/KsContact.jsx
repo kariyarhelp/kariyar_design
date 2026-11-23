@@ -16,7 +16,7 @@ function KSContact() {
   ];
   const channels = [
     ["phone", tx("Helpline", "Layin taimako"), "*384*77#", "tel:*384*77%23"],
-    ["envelope-simple", tx("Email", "Imel"), "kariyar.help@gmail.com", "mailto:kariyar.help@gmail.com"],
+    ["envelope-simple", tx("Email", "Imel"), "help@kariyar.com", "mailto:help@kariyar.com"],
     [
       "map-pin",
       tx("Office", "Ofis"),
